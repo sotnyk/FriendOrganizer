@@ -7,8 +7,8 @@
     <ProjectGuid>{4DAED735-9021-4C44-BF76-9DECF320B3A4}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>FriendPrganizer.Model</RootNamespace>
-    <AssemblyName>FriendPrganizer.Model</AssemblyName>
+    <RootNamespace>FriendOrganizer.Model</RootNamespace>
+    <AssemblyName>FriendOrganizer.Model</AssemblyName>
     <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

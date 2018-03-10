@@ -1,4 +1,4 @@
-﻿namespace FriendPrganizer.Model
+﻿namespace FriendOrganizer.Model
 {
     public class Friend
     {
