@@ -78,7 +78,6 @@ namespace FriendOrganizer.UI.Wrappers
         private void OnErrorsChanged(string propertyName)
         {
             ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(propertyName));
-            Console.WriteLine("Errors changed for: " + propertyName);
         }
 
         private void AddError(string propertyName, string error)
