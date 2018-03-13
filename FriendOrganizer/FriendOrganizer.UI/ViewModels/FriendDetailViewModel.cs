@@ -1,6 +1,7 @@
 ﻿using FriendOrganizer.Model;
 using FriendOrganizer.UI.Data;
 using FriendOrganizer.UI.Events;
+using FriendOrganizer.UI.Wrappers;
 using GalaSoft.MvvmLight;
 using Prism.Commands;
 using Prism.Events;
@@ -15,7 +16,7 @@ namespace FriendOrganizer.UI.ViewModels
         private readonly IFriendDataService _dataService;
         private readonly IEventAggregator _eventAggregator;
 
-        public Friend Friend { get; set; }
+        public FriendWrapper Friend { get; set; }
 
         public ICommand SaveCommand { get; }            
 
@@ -36,7 +37,7 @@ namespace FriendOrganizer.UI.ViewModels
 
         private async void OnSaveExecute()
         {
-            await _dataService.SaveAsync(Friend);
+            await _dataService.SaveAsync(Friend.Model);
             _eventAggregator.GetEvent<AfterFriendSavedEvent>()
                 .Publish(new AfterFriendSavedEventArgs
                 {
@@ -52,7 +53,7 @@ namespace FriendOrganizer.UI.ViewModels
 
         public async Task LoadAsync(int friendId)
         {
-            Friend = await _dataService.GetByIdAsync(friendId);
+            Friend = new FriendWrapper(await _dataService.GetByIdAsync(friendId));
         }
     }
 }
