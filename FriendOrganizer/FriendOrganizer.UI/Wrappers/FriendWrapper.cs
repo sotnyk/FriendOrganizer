@@ -3,13 +3,13 @@ using System.Runtime.CompilerServices;
 
 namespace FriendOrganizer.UI.Wrappers
 {
-    public class FriendWrapper: NotifyDataErrorInfoBase
+    public class FriendWrapper : ModelWrapper<Friend>
     {
-        public Friend Model { get; }
 
         public int Id => Model.Id;
 
-        public string FirstName {
+        public string FirstName
+        {
             get => Model.FirstName;
             set
             {
@@ -48,9 +48,8 @@ namespace FriendOrganizer.UI.Wrappers
             }
         }
 
-        public FriendWrapper(Friend model)
+        public FriendWrapper(Friend model) : base(model)
         {
-            Model = model;
         }
     }
 }
