@@ -14,19 +14,7 @@ namespace FriendOrganizer.UI.Wrappers
             set
             {
                 Model.FirstName = value;
-                ValidateProperty();
-            }
-        }
-
-        private void ValidateProperty([CallerMemberName]string propertyName = null)
-        {
-            ClearErrors(propertyName);
-            switch (propertyName)
-            {
-                case nameof(FirstName):
-                    if (FirstName.StartsWith("R"))
-                        AddError(propertyName, "I don't like names started with 'R' ");
-                    break;
+                ValidatePropertyInternal(value);
             }
         }
 
@@ -36,6 +24,7 @@ namespace FriendOrganizer.UI.Wrappers
             set
             {
                 Model.LastName = value;
+                ValidatePropertyInternal(value);
             }
         }
 
@@ -45,6 +34,7 @@ namespace FriendOrganizer.UI.Wrappers
             set
             {
                 Model.Email = value;
+                ValidatePropertyInternal(value);
             }
         }
 

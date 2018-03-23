@@ -30,7 +30,8 @@ namespace FriendOrganizer.UI.ViewModels
 
         private bool OnSaveCanExecute()
         {
-            return true;
+            // TODO: Check in addition if friend has changes
+            return Friend != null && !Friend.HasErrors;
         }
 
         private async void OnSaveExecute()
@@ -52,6 +53,14 @@ namespace FriendOrganizer.UI.ViewModels
         public async Task LoadAsync(int friendId)
         {
             Friend = new FriendWrapper(await _dataService.GetByIdAsync(friendId));
+            Friend.PropertyChanged += (s, e) =>
+              {
+                  if (e.PropertyName == nameof(Friend.HasErrors))
+                  {
+                      ((DelegateCommand)SaveCommand).RaiseCanExecuteChanged();
+                  }
+              };
+            ((DelegateCommand)SaveCommand).RaiseCanExecuteChanged();
         }
     }
 }
