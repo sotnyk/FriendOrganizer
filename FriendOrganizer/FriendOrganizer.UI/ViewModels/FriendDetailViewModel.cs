@@ -1,6 +1,7 @@
 ﻿using FriendOrganizer.Model;
 using FriendOrganizer.UI.Data.Repositories;
 using FriendOrganizer.UI.Events;
+using FriendOrganizer.UI.Views.Services;
 using FriendOrganizer.UI.Wrappers;
 using GalaSoft.MvvmLight;
 using Prism.Commands;
@@ -15,6 +16,7 @@ namespace FriendOrganizer.UI.ViewModels
     {
         private readonly IFriendRepository _friendRepository;
         private readonly IEventAggregator _eventAggregator;
+        private readonly IMessageDialogService _messageDialogService;
         private bool _hasChanges;
 
         public FriendWrapper Friend { get; set; }
@@ -33,13 +35,27 @@ namespace FriendOrganizer.UI.ViewModels
         }
 
         public ICommand SaveCommand { get; }
+        public ICommand DeleteCommand { get; }
 
         public FriendDetailViewModel(IFriendRepository friendRepository,
-            IEventAggregator eventAggregator)
+            IEventAggregator eventAggregator,
+            IMessageDialogService messageDialogService)
         {
             _friendRepository = friendRepository;
             _eventAggregator = eventAggregator;
+            _messageDialogService = messageDialogService;
             SaveCommand = new DelegateCommand(OnSaveExecute, OnSaveCanExecute);
+            DeleteCommand = new DelegateCommand(OnDeleteExecute);
+        }
+
+        private async void OnDeleteExecute()
+        {
+            if (_messageDialogService.ShowOkCancelDialog($"Do you really want to delete the friend {Friend.FirstName} {Friend.LastName}?",
+                "Question") == MessageDialogResult.Cancel)
+                return;
+            _friendRepository.Remove(Friend.Model);
+            await _friendRepository.SaveAsync();
+            _eventAggregator.GetEvent<AfterFriendDeletedEvent>().Publish(Friend.Id);
         }
 
         private bool OnSaveCanExecute()
@@ -77,14 +93,15 @@ namespace FriendOrganizer.UI.ViewModels
                   }
               };
             ((DelegateCommand)SaveCommand).RaiseCanExecuteChanged();
+            if (!friendId.HasValue)
+            {
+                Friend.FirstName = "";
+            }
         }
 
         private Friend CreateNewFriend()
         {
-            var friend = new Friend
-            {
-
-            };
+            var friend = new Friend();
             _friendRepository.Add(friend);
             return friend;
         }

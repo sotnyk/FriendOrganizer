@@ -2,6 +2,7 @@
 using FriendOrganizer.UI.Events;
 using GalaSoft.MvvmLight;
 using Prism.Events;
+using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -22,6 +23,16 @@ namespace FriendOrganizer.UI.ViewModels
             _friendLookupDataService = friendLookupDataService;
             _eventAggregator = eventAggregator;
             _eventAggregator.GetEvent<AfterFriendSavedEvent>().Subscribe(AfterFriendSaved);
+            _eventAggregator.GetEvent<AfterFriendDeletedEvent>().Subscribe(AfterFriendDeleted);
+        }
+
+        private void AfterFriendDeleted(int friendId)
+        {
+            var friend = Friends.SingleOrDefault(f => f.Id == friendId);
+            if (friend != null)
+            {
+                Friends.Remove(friend);
+            }
         }
 
         private void AfterFriendSaved(AfterFriendSavedEventArgs obj)
