@@ -3,6 +3,7 @@ using FriendOrganizer.DataAccess;
 using FriendOrganizer.UI.Data.Lookups;
 using FriendOrganizer.UI.Data.Repositories;
 using FriendOrganizer.UI.ViewModels;
+using FriendOrganizer.UI.Views.Services;
 using Prism.Events;
 
 namespace FriendOrganizer.UI.Startup
@@ -25,6 +26,8 @@ namespace FriendOrganizer.UI.Startup
 
             builder.RegisterType<FriendRepository>().AsImplementedInterfaces();
             builder.RegisterType<LookupDataService>().AsImplementedInterfaces();
+
+            builder.RegisterType<MessageDialogService>().AsImplementedInterfaces();
 
             return builder.Build();
         }
