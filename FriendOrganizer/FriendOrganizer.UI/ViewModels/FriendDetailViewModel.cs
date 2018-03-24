@@ -1,9 +1,11 @@
-﻿using FriendOrganizer.UI.Data.Repositories;
+﻿using FriendOrganizer.Model;
+using FriendOrganizer.UI.Data.Repositories;
 using FriendOrganizer.UI.Events;
 using FriendOrganizer.UI.Wrappers;
 using GalaSoft.MvvmLight;
 using Prism.Commands;
 using Prism.Events;
+using System;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
@@ -57,9 +59,12 @@ namespace FriendOrganizer.UI.ViewModels
                 });
         }
 
-        public async Task LoadAsync(int friendId)
+        public async Task LoadAsync(int? friendId)
         {
-            Friend = new FriendWrapper(await _friendRepository.GetByIdAsync(friendId));
+            var friend = friendId.HasValue ?
+                await _friendRepository.GetByIdAsync(friendId.Value)
+                : CreateNewFriend();
+            Friend = new FriendWrapper(friend);
             Friend.PropertyChanged += (s, e) =>
               {
                   if (!HasChanges)
@@ -72,6 +77,16 @@ namespace FriendOrganizer.UI.ViewModels
                   }
               };
             ((DelegateCommand)SaveCommand).RaiseCanExecuteChanged();
+        }
+
+        private Friend CreateNewFriend()
+        {
+            var friend = new Friend
+            {
+
+            };
+            _friendRepository.Add(friend);
+            return friend;
         }
     }
 }

@@ -8,11 +8,22 @@
         mc:Ignorable="d"
         Title="FriendOrganizer" Height="480" Width="640" FontSize="20">
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="200"/>
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
-        <views:NavigationView DataContext="{Binding NavigationViewModel}"/>
-        <views:FriendDetailView Grid.Column="1" DataContext="{Binding FriendDetailViewModel}"/>            
+        <Menu Grid.ColumnSpan="2" FontSize="20">
+            <MenuItem Header="Create">
+                <MenuItem Header="New Friend" Command="{Binding CreateNewFriendCommand}"/>
+            </MenuItem>
+        </Menu>
+        <views:NavigationView Grid.Row="1"
+            DataContext="{Binding NavigationViewModel}"/>
+        <views:FriendDetailView Grid.Column="1" Grid.Row="1"
+            DataContext="{Binding FriendDetailViewModel}"/>            
     </Grid>
 </Window>
