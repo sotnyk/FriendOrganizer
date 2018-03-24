@@ -1,4 +1,4 @@
-﻿using FriendOrganizer.UI.Data;
+﻿using FriendOrganizer.UI.Data.Repositories;
 using FriendOrganizer.UI.Events;
 using FriendOrganizer.UI.Wrappers;
 using GalaSoft.MvvmLight;
@@ -11,20 +11,18 @@ namespace FriendOrganizer.UI.ViewModels
 {
     public class FriendDetailViewModel : ViewModelBase, IFriendDetailViewModel
     {
-        private readonly IFriendDataService _dataService;
+        private readonly IFriendRepository _friendRepository;
         private readonly IEventAggregator _eventAggregator;
 
         public FriendWrapper Friend { get; set; }
 
         public ICommand SaveCommand { get; }            
 
-        public FriendDetailViewModel(IFriendDataService dataService,
+        public FriendDetailViewModel(IFriendRepository friendRepository,
             IEventAggregator eventAggregator)
         {
-            _dataService = dataService;
+            _friendRepository = friendRepository;
             _eventAggregator = eventAggregator;
-            _eventAggregator.GetEvent<OpenFriendDetailViewEvent>()
-                .Subscribe(OnOpenFriendDetailViewAsync);
             SaveCommand = new DelegateCommand(OnSaveExecute, OnSaveCanExecute);
         }
 
@@ -36,7 +34,7 @@ namespace FriendOrganizer.UI.ViewModels
 
         private async void OnSaveExecute()
         {
-            await _dataService.SaveAsync(Friend.Model);
+            await _friendRepository.SaveAsync();
             _eventAggregator.GetEvent<AfterFriendSavedEvent>()
                 .Publish(new AfterFriendSavedEventArgs
                 {
@@ -45,14 +43,9 @@ namespace FriendOrganizer.UI.ViewModels
                 });
         }
 
-        private async void OnOpenFriendDetailViewAsync(int friendId)
-        {
-            await LoadAsync(friendId);
-        }
-
         public async Task LoadAsync(int friendId)
         {
-            Friend = new FriendWrapper(await _dataService.GetByIdAsync(friendId));
+            Friend = new FriendWrapper(await _friendRepository.GetByIdAsync(friendId));
             Friend.PropertyChanged += (s, e) =>
               {
                   if (e.PropertyName == nameof(Friend.HasErrors))
