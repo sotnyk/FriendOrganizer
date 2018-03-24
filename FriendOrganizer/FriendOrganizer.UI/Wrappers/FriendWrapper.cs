@@ -5,7 +5,6 @@ namespace FriendOrganizer.UI.Wrappers
 {
     public class FriendWrapper : ModelWrapper<Friend>
     {
-
         public int Id => Model.Id;
 
         public string FirstName
@@ -35,6 +34,15 @@ namespace FriendOrganizer.UI.Wrappers
             {
                 Model.Email = value;
                 ValidatePropertyInternal(value);
+            }
+        }
+
+        public int? FavoriteLanguageId
+        {
+            get => Model.FavoriteLanguageId;
+            set
+            {
+                Model.FavoriteLanguageId = value;
             }
         }
 
