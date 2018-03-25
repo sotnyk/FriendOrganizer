@@ -7,7 +7,8 @@
         xmlns:views="clr-namespace:FriendOrganizer.UI.Views"
         xmlns:viewModels="clr-namespace:FriendOrganizer.UI.ViewModels"
         mc:Ignorable="d"
-        Title="FriendOrganizer" Height="480" Width="640" FontSize="20">
+        Title="FriendOrganizer" Height="600" Width="800" FontSize="20"
+        WindowStartupLocation="CenterScreen">
     <Window.Resources>
         <DataTemplate DataType="{x:Type viewModels:FriendDetailViewModel}">
             <views:FriendDetailView/>
