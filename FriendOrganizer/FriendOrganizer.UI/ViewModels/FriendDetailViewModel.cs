@@ -8,7 +8,9 @@ using GalaSoft.MvvmLight;
 using Prism.Commands;
 using Prism.Events;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -22,6 +24,7 @@ namespace FriendOrganizer.UI.ViewModels
         private readonly IMessageDialogService _messageDialogService;
         private readonly IProgrammingLanguageLookupDataService _programmingLanguageLookupDataService;
         private bool _hasChanges;
+        private FriendPhoneNumberWrapper _selectedPhoneNumber;
 
         public FriendWrapper Friend { get; set; }
 
@@ -38,9 +41,26 @@ namespace FriendOrganizer.UI.ViewModels
             }
         }
 
+        public FriendPhoneNumberWrapper SelectedPhoneNumber
+        {
+            get => _selectedPhoneNumber;
+            set
+            {
+                if (_selectedPhoneNumber != value)
+                {
+                    _selectedPhoneNumber = value;
+                    ((DelegateCommand)RemovePhoneNumberCommand).RaiseCanExecuteChanged();
+                }
+            }
+        }
+
         public ICommand SaveCommand { get; }
         public ICommand DeleteCommand { get; }
+        public ICommand AddPhoneNumberCommand { get; }
+        public ICommand RemovePhoneNumberCommand { get; }
         public ObservableCollection<LookupItem> ProgrammingLanguages { get; }
+
+        public ObservableCollection<FriendPhoneNumberWrapper> PhoneNumbers { get; }
 
         public FriendDetailViewModel(IFriendRepository friendRepository,
             IEventAggregator eventAggregator,
@@ -54,8 +74,26 @@ namespace FriendOrganizer.UI.ViewModels
 
             SaveCommand = new DelegateCommand(OnSaveExecute, OnSaveCanExecute);
             DeleteCommand = new DelegateCommand(OnDeleteExecute);
+            AddPhoneNumberCommand = new DelegateCommand(OnAddPhoneNumberExecute);
+            RemovePhoneNumberCommand = new DelegateCommand(OnRemovePhoneNumberExecute, OnRemovePhoneNumberCanExecute);
 
             ProgrammingLanguages = new ObservableCollection<LookupItem>();
+            PhoneNumbers = new ObservableCollection<FriendPhoneNumberWrapper>();
+        }
+
+        private bool OnRemovePhoneNumberCanExecute()
+        {
+            return SelectedPhoneNumber != null;
+        }
+
+        private void OnRemovePhoneNumberExecute()
+        {
+            // ToDo:
+        }
+
+        private void OnAddPhoneNumberExecute()
+        {
+            // ToDo:
         }
 
         private async void OnDeleteExecute()
@@ -70,7 +108,10 @@ namespace FriendOrganizer.UI.ViewModels
 
         private bool OnSaveCanExecute()
         {
-            return Friend != null && !Friend.HasErrors && HasChanges;
+            return Friend != null
+                && !Friend.HasErrors
+                && !PhoneNumbers.Any(pn => pn.HasErrors)
+                && HasChanges;
         }
 
         private async void OnSaveExecute()
@@ -91,7 +132,35 @@ namespace FriendOrganizer.UI.ViewModels
                 await _friendRepository.GetByIdAsync(friendId.Value)
                 : CreateNewFriend();
             InitializeFriend(friendId, friend);
+            InitializeFriendPhoneNumbers(friend.PhoneNumbers);
             await LoadProgrammingLanguagesAsync();
+        }
+
+        private void InitializeFriendPhoneNumbers(ICollection<FriendPhoneNumber> phoneNumbers)
+        {
+            foreach (var wrapper in PhoneNumbers)
+            {
+                wrapper.PropertyChanged -= FriendPhoneNumberWrapper_PropertyChanged;
+            }
+            PhoneNumbers.Clear();
+            foreach (var friendPhoneNumber in phoneNumbers)
+            {
+                var wrapper = new FriendPhoneNumberWrapper(friendPhoneNumber);
+                PhoneNumbers.Add(wrapper);
+                wrapper.PropertyChanged += FriendPhoneNumberWrapper_PropertyChanged;
+            }
+        }
+
+        private void FriendPhoneNumberWrapper_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (!HasChanges)
+            {
+                HasChanges = _friendRepository.HasChanges();
+            }
+            if (e.PropertyName == nameof(FriendPhoneNumberWrapper.HasErrors))
+            {
+                ((DelegateCommand)SaveCommand).RaiseCanExecuteChanged();
+            }
         }
 
         private async Task LoadProgrammingLanguagesAsync()
