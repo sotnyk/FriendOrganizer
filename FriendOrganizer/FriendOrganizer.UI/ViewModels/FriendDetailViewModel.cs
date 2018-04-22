@@ -1,13 +1,10 @@
 ﻿using FriendOrganizer.Model;
 using FriendOrganizer.UI.Data.Lookups;
 using FriendOrganizer.UI.Data.Repositories;
-using FriendOrganizer.UI.Events;
 using FriendOrganizer.UI.Views.Services;
 using FriendOrganizer.UI.Wrappers;
-using GalaSoft.MvvmLight;
 using Prism.Commands;
 using Prism.Events;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -22,7 +19,6 @@ namespace FriendOrganizer.UI.ViewModels
         private readonly IFriendRepository _friendRepository;
         private readonly IMessageDialogService _messageDialogService;
         private readonly IProgrammingLanguageLookupDataService _programmingLanguageLookupDataService;
-        private bool _hasChanges;
         private FriendPhoneNumberWrapper _selectedPhoneNumber;
 
         public FriendWrapper Friend { get; set; }

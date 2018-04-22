@@ -25,5 +25,6 @@ namespace FriendOrganizer.Model
         public ProgrammingLanguage FavoriteLanguage { get; set; }
 
         public ICollection<FriendPhoneNumber> PhoneNumbers { get; set; } = new Collection<FriendPhoneNumber>();
+        public ICollection<Meeting> Meetings { get; set; } = new Collection<Meeting>();
     }
 }

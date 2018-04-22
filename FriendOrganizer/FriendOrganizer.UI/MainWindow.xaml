@@ -13,6 +13,9 @@
         <DataTemplate DataType="{x:Type viewModels:FriendDetailViewModel}">
             <views:FriendDetailView/>
         </DataTemplate>
+        <DataTemplate DataType="{x:Type viewModels:MeetingDetailViewModel}">
+            <views:MeetingDetailView/>
+        </DataTemplate>
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>

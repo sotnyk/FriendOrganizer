@@ -12,14 +12,14 @@ namespace FriendOrganizer.UI.Data.Repositories
 
         public override async Task<Friend> GetByIdAsync(int friendId)
         {
-            return await _context.Friends
+            return await Context.Friends
                 .Include(f => f.PhoneNumbers)
                 .SingleAsync(f => f.Id == friendId);
         }
 
         public void RemovePhoneNumber(FriendPhoneNumber model)
         {
-            _context.FriendPhoneNumbers.Remove(model);
+            Context.FriendPhoneNumbers.Remove(model);
         }
     }
 }

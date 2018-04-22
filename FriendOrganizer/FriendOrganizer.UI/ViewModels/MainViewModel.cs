@@ -17,18 +17,23 @@ namespace FriendOrganizer.UI.ViewModels
 
         private readonly IMessageDialogService _messageDialogService;
 
-        public Func<IFriendDetailViewModel> FriendDetailViewModelFactory { get; }
+        private readonly Func<IFriendDetailViewModel> _friendDetailViewModelFactory;
+
+        private readonly Func<IMeetingDetailViewModel> _meetingDetailViewModelFactory;
+
         public IDetailViewModel DetailViewModel { get; private set; }
 
         public ICommand CreateNewDetailCommand { get; }
 
         public MainViewModel(INavigationViewModel navigationViewModel,
             Func<IFriendDetailViewModel> friendDetailViewModelFactory,
+            Func<IMeetingDetailViewModel> meetingDetailViewModelFactory,
             IEventAggregator eventAggregator,
             IMessageDialogService messageDialogService)
         {
             _messageDialogService = messageDialogService;
-            FriendDetailViewModelFactory = friendDetailViewModelFactory;
+            _friendDetailViewModelFactory = friendDetailViewModelFactory;
+            _meetingDetailViewModelFactory = meetingDetailViewModelFactory;
             _eventAggregator = eventAggregator;
 
             _eventAggregator.GetEvent<OpenDetailViewEvent>()
@@ -67,8 +72,13 @@ namespace FriendOrganizer.UI.ViewModels
             }
             switch (args.ViewModelName) {
                 case nameof(FriendDetailViewModel):
-                    DetailViewModel = FriendDetailViewModelFactory();
+                    DetailViewModel = _friendDetailViewModelFactory();
                     break;
+                case nameof(MeetingDetailViewModel):
+                    DetailViewModel = _meetingDetailViewModelFactory();
+                    break;
+                default:
+                    throw new Exception($"ViewModel '{args.ViewModelName}' not mapped.");
             }
             await DetailViewModel.LoadAsync(args.Id);
         }
