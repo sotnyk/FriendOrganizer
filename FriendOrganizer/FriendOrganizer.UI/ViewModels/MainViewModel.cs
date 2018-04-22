@@ -1,4 +1,5 @@
-﻿using FriendOrganizer.UI.Events;
+﻿using Autofac.Features.Indexed;
+using FriendOrganizer.UI.Events;
 using FriendOrganizer.UI.Views.Services;
 using GalaSoft.MvvmLight;
 using Prism.Commands;
@@ -16,24 +17,19 @@ namespace FriendOrganizer.UI.ViewModels
         public INavigationViewModel NavigationViewModel { get; }
 
         private readonly IMessageDialogService _messageDialogService;
-
-        private readonly Func<IFriendDetailViewModel> _friendDetailViewModelFactory;
-
-        private readonly Func<IMeetingDetailViewModel> _meetingDetailViewModelFactory;
+        private readonly IIndex<string, IDetailViewModel> _detailViewModelCreator;
 
         public IDetailViewModel DetailViewModel { get; private set; }
 
         public ICommand CreateNewDetailCommand { get; }
 
         public MainViewModel(INavigationViewModel navigationViewModel,
-            Func<IFriendDetailViewModel> friendDetailViewModelFactory,
-            Func<IMeetingDetailViewModel> meetingDetailViewModelFactory,
+            IIndex<string, IDetailViewModel> detailViewModelCreator,
             IEventAggregator eventAggregator,
             IMessageDialogService messageDialogService)
         {
             _messageDialogService = messageDialogService;
-            _friendDetailViewModelFactory = friendDetailViewModelFactory;
-            _meetingDetailViewModelFactory = meetingDetailViewModelFactory;
+            _detailViewModelCreator = detailViewModelCreator;
             _eventAggregator = eventAggregator;
 
             _eventAggregator.GetEvent<OpenDetailViewEvent>()
@@ -70,16 +66,8 @@ namespace FriendOrganizer.UI.ViewModels
                     return;
                 }
             }
-            switch (args.ViewModelName) {
-                case nameof(FriendDetailViewModel):
-                    DetailViewModel = _friendDetailViewModelFactory();
-                    break;
-                case nameof(MeetingDetailViewModel):
-                    DetailViewModel = _meetingDetailViewModelFactory();
-                    break;
-                default:
-                    throw new Exception($"ViewModel '{args.ViewModelName}' not mapped.");
-            }
+
+            DetailViewModel = _detailViewModelCreator[args.ViewModelName];
             await DetailViewModel.LoadAsync(args.Id);
         }
 
