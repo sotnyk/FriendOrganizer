@@ -31,8 +31,8 @@ namespace FriendOrganizer.UI.ViewModels
             FriendDetailViewModelFactory = friendDetailViewModelFactory;
             _eventAggregator = eventAggregator;
 
-            _eventAggregator.GetEvent<OpenFriendDetailViewEvent>()
-                .Subscribe(OnOpenFriendDetailViewAsync);
+            _eventAggregator.GetEvent<OpenDetailViewEvent>()
+                .Subscribe(OnOpenDetailViewAsync);
             _eventAggregator.GetEvent<AfterFriendDeletedEvent>()
                 .Subscribe(AfterFriendDeleted);
 
@@ -48,10 +48,10 @@ namespace FriendOrganizer.UI.ViewModels
 
         private void OnCreateNewFriendExecute()
         {
-            OnOpenFriendDetailViewAsync(null);
+            OnOpenDetailViewAsync(null);
         }
 
-        private async void OnOpenFriendDetailViewAsync(int? friendId)
+        private async void OnOpenDetailViewAsync(OpenDetailViewEventArgs args)
         {
             if (DetailViewModel != null && DetailViewModel.HasChanges)
             {
@@ -61,8 +61,12 @@ namespace FriendOrganizer.UI.ViewModels
                     return;
                 }
             }
-            DetailViewModel = FriendDetailViewModelFactory();
-            await DetailViewModel.LoadAsync(friendId);
+            switch (args.ViewModelName) {
+                case nameof(FriendDetailViewModel):
+                    DetailViewModel = FriendDetailViewModelFactory();
+                    break;
+            }
+            await DetailViewModel.LoadAsync(args.Id);
         }
 
         public async Task LoadAsync()

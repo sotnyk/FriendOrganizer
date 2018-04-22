@@ -98,7 +98,7 @@
     <Compile Include="Data\Repositories\FriendRepository.cs" />
     <Compile Include="Events\AfterFriendDeletedEvent.cs" />
     <Compile Include="Events\AfterFriendSavedEvent.cs" />
-    <Compile Include="Events\OpenFriendDetailViewEvent.cs" />
+    <Compile Include="Events\OpenDetailViewEvent.cs" />
     <Compile Include="Startup\Bootstrapper.cs" />
     <Compile Include="ViewModels\FriendDetailViewModel.cs" />
     <Compile Include="ViewModels\IDetailViewModel.cs" />

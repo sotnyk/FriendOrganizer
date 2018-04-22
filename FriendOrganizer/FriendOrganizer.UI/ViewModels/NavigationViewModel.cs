@@ -40,7 +40,8 @@ namespace FriendOrganizer.UI.ViewModels
             var lookupItem = Friends.SingleOrDefault(l => l.Id == obj.Id);
             if (lookupItem == null)
             {
-                Friends.Add(new NavigationItemViewModel(obj.Id, obj.DisplayMember, _eventAggregator));
+                Friends.Add(new NavigationItemViewModel(obj.Id, obj.DisplayMember, 
+                    nameof(FriendDetailViewModel), _eventAggregator));
             }
             else
             {
@@ -55,7 +56,7 @@ namespace FriendOrganizer.UI.ViewModels
             foreach (var item in lookup)
             {
                 Friends.Add(new NavigationItemViewModel(item.Id, item.DisplayMember,
-                    _eventAggregator));
+                    nameof(FriendDetailViewModel), _eventAggregator));
             }
         }
     }
