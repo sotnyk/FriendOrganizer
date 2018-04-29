@@ -12,5 +12,10 @@ namespace FriendOrganizer.UI.Views.Services
             if (res == MessageBoxResult.Cancel) return MessageDialogResult.Cancel;
             throw new NotImplementedException("Unexpected dialog result: " + res);
         }
+
+        public void ShowInfoDialog(string text)
+        {
+            MessageBox.Show(text, "Info");
+        }
     }
 }
