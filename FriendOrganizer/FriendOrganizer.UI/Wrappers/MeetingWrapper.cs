@@ -28,6 +28,10 @@ namespace FriendOrganizer.UI.Wrappers
             {
                 Model.DateFrom = value;
                 ValidatePropertyInternal(value);
+                if (DateTo < DateFrom)
+                {
+                    DateTo = DateFrom;
+                }
             }
         }
 
@@ -38,6 +42,10 @@ namespace FriendOrganizer.UI.Wrappers
             {
                 Model.DateTo = value;
                 ValidatePropertyInternal(value);
+                if (DateTo < DateFrom)
+                {
+                    DateFrom = DateTo;
+                }
             }
         }
 
