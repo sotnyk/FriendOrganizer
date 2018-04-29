@@ -23,8 +23,8 @@ namespace FriendOrganizer.UI.ViewModels
 
         public ObservableCollection<Friend> AddedFriends { get; }
         public ObservableCollection<Friend> AvailableFriends { get; }
-        public ICommand AddFriendCommand { get; }
-        public ICommand RemoveFriendCommand { get; }
+        public DelegateCommand AddFriendCommand { get; }
+        public DelegateCommand RemoveFriendCommand { get; }
         public MeetingWrapper Meeting { get; private set; }
 
         public Friend SelectedAvailableFriend
@@ -33,7 +33,7 @@ namespace FriendOrganizer.UI.ViewModels
             set
             {
                 _selectedAvailableFriend = value;
-                ((DelegateCommand)AddFriendCommand).RaiseCanExecuteChanged();
+                AddFriendCommand.RaiseCanExecuteChanged();
             }
         }
 
@@ -43,7 +43,7 @@ namespace FriendOrganizer.UI.ViewModels
             set
             {
                 _selectedAddedFriend = value;
-                ((DelegateCommand)RemoveFriendCommand).RaiseCanExecuteChanged();
+                RemoveFriendCommand.RaiseCanExecuteChanged();
             }
         }
 
@@ -64,14 +64,26 @@ namespace FriendOrganizer.UI.ViewModels
 
         private void OnRemoveFriendExecute()
         {
-            throw new NotImplementedException();
+            var friendToRemove = SelectedAddedFriend;
+
+            Meeting.Model.Friends.Remove(friendToRemove);
+            AddedFriends.Remove(friendToRemove);
+            AvailableFriends.Add(friendToRemove);
+            HasChanges = _meetingRepository.HasChanges();
+            SaveCommand.RaiseCanExecuteChanged();
         }
 
         private bool OnAddFriendCanExecute() => SelectedAvailableFriend != null;
 
         private void OnAddFriendExecute()
         {
-            throw new NotImplementedException();
+            var friendToAdd = SelectedAvailableFriend;
+
+            Meeting.Model.Friends.Add(friendToAdd);
+            AddedFriends.Add(friendToAdd);
+            AvailableFriends.Remove(friendToAdd);
+            HasChanges = _meetingRepository.HasChanges();
+            SaveCommand.RaiseCanExecuteChanged();
         }
 
         public async override Task LoadAsync(int? meetingId)
@@ -109,9 +121,9 @@ namespace FriendOrganizer.UI.ViewModels
                 if (!HasChanges)
                     HasChanges = _meetingRepository.HasChanges();
                 if (e.PropertyName == nameof(Meeting.HasErrors))
-                    ((DelegateCommand)SaveCommand).RaiseCanExecuteChanged();
+                    SaveCommand.RaiseCanExecuteChanged();
             };
-            ((DelegateCommand)SaveCommand).RaiseCanExecuteChanged();
+            SaveCommand.RaiseCanExecuteChanged();
             if (Meeting.Id == 0)
             {
                 // Fire the validation

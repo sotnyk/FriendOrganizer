@@ -24,8 +24,8 @@ namespace FriendOrganizer.UI.ViewModels
             }
         }
 
-        public ICommand SaveCommand { get; }
-        public ICommand DeleteCommand { get; }
+        public DelegateCommand SaveCommand { get; }
+        public DelegateCommand DeleteCommand { get; }
 
         public DetailViewModelBase(IEventAggregator eventAggregator)
         {
